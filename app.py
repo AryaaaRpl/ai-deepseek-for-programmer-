@@ -87,32 +87,33 @@ def chat():
             timeout=30
         )
         
-        raw_content = response.json()['choices'][0]['message']['content']
-        code_blocks = extract_code_blocks(raw_content)
+        # Debugging: Log seluruh respons
+        print("Full API Response:", response.json())
         
-        # Jika tidak ada blok kode, kembalikan raw content
-        if not code_blocks:
+        # Perbaikan struktur respons
+        response_data = response.json()
+        
+        if 'choices' not in response_data:
             return jsonify({
-                'response': raw_content,
-                'status': 'success'
-            })
+                'response': "Error: Invalid API response structure",
+                'status': 'error',
+                'raw_response': response_data  # Untuk debugging
+            }), 500
+            
+        # Ambil konten dengan pengecekan lebih ketat
+        if len(response_data['choices']) > 0:
+            message_content = response_data['choices'][0].get('message', {}).get('content', '')
+        else:
+            message_content = "Error: No choices available in response"
         
-        # Format response untuk frontend
-        formatted_response = ""
-        for block in code_blocks:
-            formatted_response += f"```{block['language']}\n{block['code']}\n```\n\n"
-        
-        return jsonify({
-            'response': formatted_response.strip(),
-            'status': 'success',
-            'code_blocks': code_blocks  # Untuk debugging
-        })
-        
+        # ... [lanjutkan dengan pemrosesan biasa]
+
     except Exception as e:
+        app.logger.error(f"Chat error: {str(e)}")
         return jsonify({
-            'response': f"Error: {str(e)}",
+            'response': f"Server Error: {str(e)}",
             'status': 'error'
-        })
+        }), 500
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
