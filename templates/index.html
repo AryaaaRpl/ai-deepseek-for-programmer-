@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Programmer Assistant - DeepSeek v3</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Syntax Highlighting -->
+<link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> Programmer AI Assistant</h1>
+            <p class="subtitle">Powered by DeepSeek v3 - Focused on code solutions</p>
+        </header>
+        
+        <div class="chat-container">
+            <div id="chat-box" class="chat-box"></div>
+            
+            <div class="input-area">
+                <textarea id="user-input" placeholder="Ask your coding question... (Shift+Enter for new line)" rows="1"></textarea>
+                <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            
+            <div class="code-block">
+    <div class="code-header">
+        <span>language</span>
+        <span class="copy-feedback">Copied!</span>
+        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    <pre><code>your code here</code></pre>
+</div>
+            <div class="features">
+                <button class="feature-btn" data-prompt="Optimalkan kode berikut:"><i class="fas fa-bolt"></i> Optimasi</button>
+                <button class="feature-btn" data-prompt="Debug kode berikut:"><i class="fas fa-bug"></i> Debug</button>
+                <button class="feature-btn" data-prompt="Buatkan contoh implementasi:"><i class="fas fa-code"></i> Contoh</button>
+                <button class="feature-btn" data-prompt="Jelaskan konsep berikut secara singkat:"><i class="fas fa-book"></i> Konsep</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Specialized for programmers • No unnecessary explanations • Code-focused solutions</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
