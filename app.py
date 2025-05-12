@@ -7,7 +7,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 
 def extract_code_blocks(response):
     """Ekstrak semua blok kode dari response"""
@@ -74,7 +74,7 @@ def chat():
             "model": "deepseek/deepseek-chat-v3-0324:free",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.1,
-            "max_tokens": 5600
+            "max_tokens": 2000
         }
 
         response = requests.post(
