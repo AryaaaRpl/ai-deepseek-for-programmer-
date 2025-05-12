@@ -15,11 +15,10 @@ def extract_code_blocks(response):
     current_block = []
     in_block = False
     language = ""
-    
+
     for line in response.split('\n'):
         if line.startswith('```'):
             if in_block:
-                # Akhir blok kode
                 code_blocks.append({
                     'language': language,
                     'code': '\n'.join(current_block)
@@ -27,12 +26,11 @@ def extract_code_blocks(response):
                 current_block = []
                 in_block = False
             else:
-                # Awal blok kode
                 language = line[3:].strip() or 'plaintext'
                 in_block = True
         elif in_block:
             current_block.append(line)
-    
+
     return code_blocks
 
 @app.route('/')
@@ -42,8 +40,7 @@ def home():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json['message']
-    
-    # Prompt yang sangat spesifik
+
     prompt = f"""
     [PERINTAH KETAT]
     1. BUATKAN CODENYA BERDASARKAN APA YANG DI INPUT
@@ -63,23 +60,23 @@ def chat():
        ...
        ```
     4. KODE HARUS LENGKAP DAN BISA LANGSUNG DICOBA
-    
+
     Permintaan: {user_message}
     """
-    
+
     try:
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json"
         }
-        
+
         payload = {
-            "model": "deepseek/deepseek-chat-v3-0324",
+            "model": "deepseek/deepseek-chat-v3-0324:free",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.1,
             "max_tokens": 6600
         }
-        
+
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
@@ -87,27 +84,27 @@ def chat():
             timeout=30
         )
         
-        # Debugging: Log seluruh respons
-        print("Full API Response:", response.json())
+        raw_content = response.json()['choices'][0]['message']['content']
+        code_blocks = extract_code_blocks(raw_content)
         
-        # Perbaikan struktur respons
-        response_data = response.json()
-        
-        if 'choices' not in response_data:
+        # Jika tidak ada blok kode, kembalikan raw content
+        if not code_blocks:
             return jsonify({
-                'response': "Error: Invalid API response structure",
-                'status': 'error',
-                'raw_response': response_data  # Untuk debugging
-            }), 500
-            
-        # Ambil konten dengan pengecekan lebih ketat
-        if len(response_data['choices']) > 0:
-            message_content = response_data['choices'][0].get('message', {}).get('content', '')
-        else:
-            message_content = "Error: No choices available in response"
+                'response': raw_content,
+                'status': 'success'
+            })
         
-        # ... [lanjutkan dengan pemrosesan biasa]
-
+        # Format response untuk frontend
+        formatted_response = ""
+        for block in code_blocks:
+            formatted_response += f"```{block['language']}\n{block['code']}\n```\n\n"
+        
+        return jsonify({
+            'response': formatted_response.strip(),
+            'status': 'success',
+            'code_blocks': code_blocks  # Untuk debugging
+        })
+        
     except Exception as e:
         app.logger.error(f"Chat error: {str(e)}")
         return jsonify({
