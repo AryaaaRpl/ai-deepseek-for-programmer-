@@ -75,8 +75,8 @@ def chat():
         payload = {
             "model": "deepseek/deepseek-chat-v3-0324:free",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.1,
-            "max_tokens": 4000
+            "temperature": 0.2,
+            "max_tokens": 6600
         }
         
         response = requests.post(
