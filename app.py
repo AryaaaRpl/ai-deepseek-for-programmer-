@@ -46,9 +46,10 @@ def chat():
     # Prompt yang sangat spesifik
     prompt = f"""
     [PERINTAH KETAT]
-    1. RESPON HANYA BERISI KODE
-    2. TANPA TEKS PENJELASAN
-    3. PASTIKAN FORMAT:
+    1. BUAT KODENYA BERDASARKAN APA YANG DI INPUT
+    2. RESPON HANYA BERISI KODE
+    3. TANPA TEKS PENJELASAN
+    4. PASTIKAN FORMAT:
        ```html
        <!DOCTYPE html>
        ...
@@ -75,8 +76,8 @@ def chat():
         payload = {
             "model": "deepseek/deepseek-chat-v3-0324:free",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.2,
-            "max_tokens": 6600
+            "temperature": 0.1,
+            "max_tokens": 4000
         }
         
         response = requests.post(
