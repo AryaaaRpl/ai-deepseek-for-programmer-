@@ -7,7 +7,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 def extract_code_blocks(response):
     """Ekstrak semua blok kode dari response"""
@@ -15,10 +15,11 @@ def extract_code_blocks(response):
     current_block = []
     in_block = False
     language = ""
-
+    
     for line in response.split('\n'):
         if line.startswith('```'):
             if in_block:
+                # Akhir blok kode
                 code_blocks.append({
                     'language': language,
                     'code': '\n'.join(current_block)
@@ -26,11 +27,12 @@ def extract_code_blocks(response):
                 current_block = []
                 in_block = False
             else:
+                # Awal blok kode
                 language = line[3:].strip() or 'plaintext'
                 in_block = True
         elif in_block:
             current_block.append(line)
-
+    
     return code_blocks
 
 @app.route('/')
@@ -40,7 +42,8 @@ def home():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json['message']
-
+    
+    # Prompt yang sangat spesifik
     prompt = f"""
     [PERINTAH KETAT]
     1. BUATKAN CODENYA BERDASARKAN APA YANG DI INPUT
@@ -60,23 +63,23 @@ def chat():
        ...
        ```
     4. KODE HARUS LENGKAP DAN BISA LANGSUNG DICOBA
-
+    
     Permintaan: {user_message}
     """
-
+    
     try:
         headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
             "Content-Type": "application/json"
         }
-
+        
         payload = {
-            "model": "deepseek/deepseek-chat-v3-0324:free",
+            "model": "deepseek/deepseek-chat-v3-0324",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.1,
-            "max_tokens": 2000
+            "max_tokens": 6600
         }
-
+        
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
@@ -106,11 +109,10 @@ def chat():
         })
         
     except Exception as e:
-        app.logger.error(f"Chat error: {str(e)}")
         return jsonify({
-            'response': f"Server Error: {str(e)}",
+            'response': f"Error: {str(e)}",
             'status': 'error'
-        }), 500
+        })
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
